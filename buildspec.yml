@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies"
+      - mvn install -DskipTests
+  pre_build:
+    commands:
+      - echo "Running pre-build tasks"
+      - mvn clean
+  build:
+    commands:
+      - echo "Building the application"
+      - mvn package -DskipTests
+  post_build:
+    commands:
+      - echo "Build completed successfully"
+
+artifacts:
+  files:
+    - target/*.jar
+  discard-paths: yes
+
+
