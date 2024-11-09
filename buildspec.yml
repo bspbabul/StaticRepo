@@ -21,8 +21,3 @@ artifacts:
   files:
     - target/*.jar
   discard-paths: yes
-
-environment:
-  computeType: BUILD_GENERAL1_SMALL
-  image: aws/codebuild/java:corretto-21
-  type: LINUX_CONTAINER
