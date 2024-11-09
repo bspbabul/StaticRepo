@@ -4,18 +4,27 @@ phases:
   install:
     commands:
       - echo "Installing dependencies"
+      - yum update -y
+      - yum install -y maven openssh-client aws-cli
       - mvn install -DskipTests
+
   pre_build:
     commands:
       - echo "Running pre-build tasks"
       - mvn clean
+
   build:
     commands:
       - echo "Building the application"
       - mvn package -DskipTests
+
   post_build:
     commands:
       - echo "Build completed successfully"
+      - echo "Getting the JAR from S3"
+      - aws s3 cp s3://staticpro-dest/demo-for-deploy-the-springboot-0.0.1-SNAPSHOT.jar /home/ec2-user/demo-for-deploy-the-springboot-0.0.1-SNAPSHOT.jar
+      - echo "Running the JAR file on EC2"
+      - ssh -o StrictHostKeyChecking=no -i /path/to/your/cloud27.pem ec2-user@ec2-13-60-202-115 "java -jar /home/ec2-user/demo-for-deploy-the-springboot-0.0.1-SNAPSHOT.jar"
 
 artifacts:
   files:
