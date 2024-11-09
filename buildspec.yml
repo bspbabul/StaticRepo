@@ -5,6 +5,9 @@ phases:
     commands:
       - echo "Installing dependencies"
       - mvn install -DskipTests
+      - echo "Downloading PEM file from S3"
+      - aws s3 cp s3://staticpro-dest/cloud27.pem /tmp/cloud27.pem
+      - chmod 400 /tmp/cloud27.pem  # Ensures the private key has the correct permissions
   pre_build:
     commands:
       - echo "Running pre-build tasks"
@@ -16,8 +19,11 @@ phases:
   post_build:
     commands:
       - echo "Build completed successfully"
-
+      - echo "Copying JAR to EC2 instance"
+      - scp -o StrictHostKeyChecking=no -i /tmp/cloud27.pem target/demo-for-deploy-the-springboot-0.0.1-SNAPSHOT.jar ubuntu@ec2-51-20-12-109:/home/ubuntu/
+      - echo "Deploying the application"
+      - ssh -o StrictHostKeyChecking=no -i /tmp/cloud27.pem ubuntu@ec2-51-20-12-109 "java -jar /home/ubuntu/demo-for-deploy-the-springboot-0.0.1-SNAPSHOT.jar &"
 artifacts:
   files:
-    - target/*.jar
+    - target/demo-for-deploy-the-springboot-0.0.1-SNAPSHOT.jar
   discard-paths: yes
